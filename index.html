@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trivia Netiqueta</title>
+  <style>
+    body {
+      background: #f9d5e5;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+    }
+    #login-container, #quiz-container {
+      max-width: 600px;
+      margin: auto;
+      text-align: center;
+    }
+    #login-container input {
+      padding: 10px;
+      font-size: 18px;
+      width: 80%;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    #login-container button, #nextBtn {
+      background: #e76e94;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .question {
+      margin: 20px 0;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .answers button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+      background: white;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .answers button:hover {
+      background: #f0b8c7;
+    }
+    #score {
+      font-size: 20px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Trivia sobre Netiqueta</h1>
+
+  <div id="login-container">
+    <input type="text" id="username" placeholder="Ingresa tu nombre" />
+    <br>
+    <button id="startBtnLogin">Comenzar</button>
+  </div>
+
+  <div id="quiz-container" style="display: none;">
+    <div id="timer" style="font-size: 18px; margin-bottom: 10px; color: #555;"></div>
+    <div id="question-container" class="question"></div>
+    <div id="answer-buttons" class="answers"></div>
+    <button id="nextBtn" style="display: none;">Siguiente</button>
+  </div>
+
+  <div id="score"></div>
+
+  <script>
+    const questions = [
+      {
+        question: "¿Qué es la netiqueta?",
+        answers: [
+          { text: "Un software para redes sociales", correct: false },
+          { text: "Un conjunto de normas de comportamiento en línea", correct: true },
+          { text: "Un tipo de contraseña", correct: false },
+          { text: "Un filtro de seguridad", correct: false }
+        ]
+      },
+      {
+        question: "¿Cuál es una norma básica de netiqueta en redes sociales?",
+        answers: [
+          { text: "Respetar las opiniones ajenas", correct: true },
+          { text: "Compartir información privada de otros", correct: false },
+          { text: "Etiquetar a todos tus contactos en una publicación", correct: false },
+          { text: "Usar lenguaje ofensivo para expresar opiniones", correct: false }
+        ]
+      },
+      {
+        question: "¿Qué se debe evitar según las normas de netiqueta?",
+        answers: [
+          { text: "Dar créditos al autor de una imagen", correct: false },
+          { text: "Hacer spam o publicar repetidamente lo mismo", correct: true },
+          { text: "Enviar mensajes con faltas de ortografía", correct: false },
+          { text: "Publicar contenido educativo", correct: false }
+        ]
+      },
+      {
+        question: "¿Por qué es importante usar un lenguaje adecuado en redes sociales?",
+        answers: [
+          { text: "Para tener más seguidores", correct: false },
+          { text: "Para comunicarte de forma respetuosa y clara", correct: true },
+          { text: "Para impresionar a los demás", correct: false },
+          { text: "Para evitar que te bloqueen", correct: false }
+        ]
+      },
+      {
+        question: "¿Qué deberías hacer antes de compartir una noticia en redes sociales?",
+        answers: [
+          { text: "Leer solo el título", correct: false },
+          { text: "Verificar si la fuente es confiable", correct: true },
+          { text: "Compartirla rápidamente", correct: false },
+          { text: "Comprobar que tenga muchos likes", correct: false }
+        ]
+      },
+      {
+        question: "¿Cuál es una buena práctica al interactuar con otros usuarios en redes sociales?",
+        answers: [
+          { text: "Responder con respeto y amabilidad", correct: true },
+          { text: "Ignorar sus comentarios", correct: false },
+          { text: "Repetir tu punto de vista hasta que estén de acuerdo", correct: false },
+          { text: "Corregir públicamente sus errores ortográficos", correct: false }
+        ]
+      },
+      {
+        question: "¿Qué implica el respeto a la privacidad en redes sociales?",
+        answers: [
+          { text: "Compartir imágenes de otros sin permiso", correct: false },
+          { text: "No divulgar información personal ajena sin consentimiento", correct: true },
+          { text: "Leer los mensajes privados de otros", correct: false },
+          { text: "Usar cuentas falsas para espiar", correct: false }
+        ]
+      },
+      {
+        question: "¿Qué significa “no hacer spam”?",
+        answers: [
+          { text: "No publicar mensajes repetitivos o no solicitados", correct: true },
+          { text: "No seguir muchas cuentas", correct: false },
+          { text: "No mandar mensajes con contenido ofensivo", correct: false },
+          { text: "No responder a los comentarios", correct: false }
+        ]
+      },
+      {
+        question: "¿Cuál es una forma de mostrar cortesía en una red social?",
+        answers: [
+          { text: "Ignorar los comentarios positivos", correct: false },
+          { text: "Criticar abiertamente los errores de otros", correct: false },
+          { text: "Saludar y despedirse en los mensajes", correct: true },
+          { text: "Usar emoticonos en exceso", correct: false }
+        ]
+      },
+      {
+        question: "¿Qué acción viola las normas de netiqueta?",
+        answers: [
+          { text: "Participar con respeto en una discusión", correct: false },
+          { text: "Usar signos de puntuación correctamente", correct: false },
+          { text: "Compartir contenido con créditos", correct: false },
+          { text: "Insultar a alguien por su punto de vista", correct: true }
+        ]
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let username = "";
+
+    const loginContainer = document.getElementById("login-container");
+    const startBtnLogin = document.getElementById("startBtnLogin");
+    const quizContainer = document.getElementById("quiz-container");
+    const questionContainer = document.getElementById("question-container");
+    const answerButtons = document.getElementById("answer-buttons");
+    const nextBtn = document.getElementById("nextBtn");
+    const scoreDisplay = document.getElementById("score");
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    startBtnLogin.addEventListener("click", () => {
+      const input = document.getElementById("username").value.trim();
+      if (input === "") {
+        alert("Por favor ingresa tu nombre");
+        return;
+      }
+      username = input;
+      loginContainer.style.display = "none";
+      quizContainer.style.display = "block";
+      document.getElementById("sound-start").play();
+      startQuiz();
+    });
+
+    function startQuiz() {
+      score = 0;
+      currentQuestionIndex = 0;
+      scoreDisplay.textContent = "";
+      showQuestion();
+    }
+
+    function showQuestion() {
+  document.getElementById("sound-start").play();
+  startTimer();
+      resetState();
+      const question = questions[currentQuestionIndex];
+      questionContainer.textContent = `Pregunta ${currentQuestionIndex + 1}: ${question.question}`;
+      const shuffledAnswers = shuffle([...question.answers]);
+      shuffledAnswers.forEach((answer) => {
+        const button = document.createElement("button");
+        button.textContent = answer.text;
+        button.dataset.correct = answer.correct;
+        button.addEventListener("click", selectAnswer);
+        answerButtons.appendChild(button);
+      });
+    }
+
+    function resetState() {
+      nextBtn.style.display = "none";
+      answerButtons.innerHTML = "";
+    }
+
+    function selectAnswer(e) {
+  clearInterval(timerInterval);
+      const selectedBtn = e.target;
+      const correct = selectedBtn.dataset.correct === "true";
+      if (correct) {
+        score += 5;
+        selectedBtn.style.backgroundColor = "#8bc34a";
+        document.getElementById("sound-correct").play();
+      } else {
+        selectedBtn.style.backgroundColor = "#e57373";
+        document.getElementById("sound-wrong").play();
+      }
+      Array.from(answerButtons.children).forEach((button) => {
+        button.disabled = true;
+        if (button.dataset.correct === "true") {
+          button.style.backgroundColor = "#8bc34a";
+        }
+      });
+      nextBtn.style.display = "block";
+    }
+
+    function showScore() {
+      confetti();
+      questionContainer.textContent = `¡Terminaste la trivia, ${username}!`;
+      answerButtons.innerHTML = "";
+      nextBtn.style.display = "none";
+      scoreDisplay.textContent = `Tu puntuación final es: ${score} puntos`;
+      loginContainer.style.display = "block";
+      document.getElementById("username").value = "";
+      startBtnLogin.textContent = "Volver a jugar";
+    }
+
+    nextBtn.addEventListener("click", () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        showQuestion();
+      } else {
+        showScore();
+      }
+    });
+  
+let timerInterval;
+let timeLeft = 20;
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 20;
+  document.getElementById("timer").textContent = `Tiempo restante: ${timeLeft}s`;
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timer").textContent = `Tiempo restante: ${timeLeft}s`;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      handleTimeout();
+    }
+  }, 1000);
+}
+
+function handleTimeout() {
+  Array.from(answerButtons.children).forEach((button) => {
+    button.disabled = true;
+    if (button.dataset.correct === "true") {
+      button.style.backgroundColor = "#8bc34a";
+    } else {
+      button.style.backgroundColor = "#e57373";
+    }
+  });
+  nextBtn.style.display = "block";
+}
+
+</script>
+
+  <audio id="sound-correct" src="videoplayback.m4a"></audio>
+<audio id="sound-start" src="20 SECONDS DIGITAL TIMER WITH ALARM with music  TEACHER AIKA.mp3"></audio>
+<audio id="sound-wrong" src="Error - Sound Effect  Non copyright sound effects  TCW-SoundEffects.mp3"></audio>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</body>
+</html>
